@@ -42,11 +42,41 @@ const checkInput = function (input) {
 };
 
 const makeGuess = function (letter) {
-  letter.toUpperCase();
-  if (guessedLetters.includes(letter)) {
+  guess = letter.toUpperCase();
+  if (guessedLetters.includes(guess)) {
     guessMessage.innerText = `You've already guessed ${letter}, please guess a new letter.`;
   } else {
-    guessedLetters.push(letter);
+    guessedLetters.push(guess);
+    displayGuesses();
+    updateWord(guessedLetters);
   }
-  console.log(guessedLetters);
+};
+
+const displayGuesses = function () {
+  guessedLettersList.innerHTML = "";
+  for (letter of guessedLetters) {
+    guessedLettersList.innerHTML += `${letter} `;
+  }
+};
+
+const updateWord = function (guessedLetters) {
+  const wordUpper = word.toUpperCase();
+  const wordArray = wordUpper.split("");
+  const revealWord = [];
+  for (const letter of wordArray) {
+    if (guessedLetters.includes(letter)) {
+      revealWord.push(letter.toUpperCase());
+    } else {
+      revealWord.push("●");
+    }
+  }
+  wordInProgress.innerText = revealWord.join("");
+  winCheck();
+};
+
+const winCheck = function () {
+  if (word.toUpperCase() === wordInProgress.innerText) {
+    guessMessage.classList.add("wind");
+    guessMessage.innerHTML = `<p class="highlight">You guessed the correct word! Congrats!</p>`;
+  }
 };
