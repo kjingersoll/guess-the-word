@@ -10,6 +10,15 @@ let word = "magnolia";
 const guessedLetters = [];
 let remainingGuesses = 8;
 
+const getWord = async function() {
+  const res = await fetch("https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt");
+  const data = await res.text();
+  const wordArray = data.split("\n");
+  const randomIndex = Math.floor(Math.random() * wordArray.length);
+  word = wordArray[randomIndex].trim();
+  makeLettersSecret(word);
+};
+
 const makeLettersSecret = function (word) {
   const wordArray = [];
   for (const letter of word) {
@@ -18,7 +27,7 @@ const makeLettersSecret = function (word) {
   wordInProgress.innerText = wordArray.join("");
 };
 
-makeLettersSecret(word);
+getWord();
 
 guessButton.addEventListener("click", function(e) {
   e.preventDefault();
@@ -49,8 +58,8 @@ const makeGuess = function (letter) {
   } else {
     guessedLetters.push(guess);
     displayGuesses();
-    countGuesses(guess);
     updateWord(guessedLetters);
+    countGuesses(guess);
   }
 };
 
@@ -87,16 +96,17 @@ const countGuesses = function (guess) {
   if (remainingGuesses === 0) {
     guessMessage.innerText = `Game Over! The word was:`;
     wordInProgress.innerText = wordUpper;
+    remainingMessage.innerText = "";
   } else if (remainingGuesses === 1){
-    guessMessage.innerText = `You have <span>${remainingGuesses} guess</span> remaining `;
+    remainingMessage.innerHTML = `You have <span>${remainingGuesses} guess</span> remaining.`;
   } else {
-    remainingMessage.innerHTML = `You have <span>${remainingGuesses} guesses</span> remaining `;
+    remainingMessage.innerHTML = `You have <span>${remainingGuesses} guesses</span> remaining.`;
   }
 };
 
 const winCheck = function () {
   if (word.toUpperCase() === wordInProgress.innerText) {
-    guessMessage.classList.add("wind");
+    guessMessage.classList.add("win");
     guessMessage.innerHTML = `<p class="highlight">You guessed the correct word! Congrats!</p>`;
   }
 };
